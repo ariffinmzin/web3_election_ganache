@@ -4,6 +4,7 @@ web3.eth.getAccounts().then((f) => {
  account = f[0];
 })
 
+// update this application binary interface
 const ABI = [
     {
       "inputs": [],
@@ -124,8 +125,7 @@ const ABI = [
 
 
 // update this contract address with your contract address
-const address = "0xC6dFFB365757310Ed85e94Ab4c11f07B94D07eDf";
-
+const address = "0xCBf8b2f56Cf8E0edDf7DAFa10A30B4F24A3E3122";
 
 var myContract = new web3.eth.Contract(ABI, address);
 
@@ -133,17 +133,14 @@ parties = {1: "party-1", 2: "party-2", 3: "party-3"}
 
 function voteForParty() {
 
-  
-
  var partyId = $("#party").val();
- console.log("Party id " + partyId);
+ //console.log("Party id " + partyId);
 
  let div_id = parties[1];
-  console.log("div-id" + div_id)
+ //console.log("div-id" + div_id)
 
  myContract.methods.vote(partyId).send({from: account}).then(function(error, result) {
     if (!error){
-            //console.log("Hello" + result);
             contract.methods.getVote().call(partyId).then((f) => {
                 $("#party-" + partyId).html(f);
                })
@@ -163,6 +160,9 @@ $(document).ready(function() {
 
   function timingLoad() {
     $('#main').load(location.href + " #main", function() {
+
+      updateTableNo();
+      updateTableParti();
     
       partyNames = Object.keys(parties);
 
@@ -178,3 +178,31 @@ $(document).ready(function() {
    }); //function timingLoad()
   } 
 });   //$(document).ready(function()
+
+function updateTableNo() {  
+
+	for (let i = 1; i <= 3; i++) {
+		myContract.methods.parties(i).call(function(error, result){
+			if (error) {
+				console.log(error, 'error')
+			} else {
+				console.log("party id : " + result[0], 'result');
+				$('#no'+i).html(result[0]);
+			}
+		});
+	} // for
+}
+
+function updateTableParti() {  
+
+	for (let i = 1; i <= 3; i++) {
+		myContract.methods.parties(i).call(function(error, result){
+			if (error) {
+				console.log(error, 'error')
+			} else {
+				//console.log(result[1], 'result');
+				$('#no'+i+'-nama').html(result[1]);
+			}
+		});
+	} // for
+}
